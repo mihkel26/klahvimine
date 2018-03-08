@@ -14,6 +14,9 @@ const TYPER = function () {
   this.word = null
   this.wordMinLength = 5
   this.guessedWords = 0
+  this.mistakes = 0
+  this.combo = 0
+  this.points = 0
 
   this.init()
 }
@@ -60,7 +63,7 @@ TYPER.prototype = {
   },
 
   generateWord: function () {
-    const generatedWordLength = this.wordMinLength + parseInt(this.guessedWords / 5)
+    const generatedWordLength = this.wordMinLength + parseInt(this.points / 50)
     const randomIndex = (Math.random() * (this.words[generatedWordLength].length - 1)).toFixed()
     const wordFromArray = this.words[generatedWordLength][randomIndex]
 
@@ -70,17 +73,51 @@ TYPER.prototype = {
   keyPressed: function (event) {
     const letter = String.fromCharCode(event.which)
 
+    if (letter !== this.word.left.charAt(0)) {
+      this.points = this.points*0.8
+      this.mistakes += 1
+      //console.log(this.points)
+      //console.log(this.mistakes)
+
+      if (this.mistakes > 4) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+        this.ctx.textAlign = 'center'
+        this.ctx.font = '140px Courier'
+        this.ctx.fillStyle = "red";
+        this.ctx.fillText("Game over! Press x to play again!", this.canvas.width / 2, this.canvas.height / 2)
+        if (letter === "x") {
+          location.reload();
+        }
+        
+
+      }
+      
+    }
+
     if (letter === this.word.left.charAt(0)) {
       this.word.removeFirstLetter()
+      //console.log(this.points)
 
       if (this.word.left.length === 0) {
         this.guessedWords += 1
+        
+        if (this.guessedWords == 5){
+          this.points = this.points*1.5
+          this.guessedWords = 0
+
+        }else{
+          this.points += 10
+
+        }
 
         this.generateWord()
       }
 
       this.word.Draw()
     }
+
+    
   }
 }
 
