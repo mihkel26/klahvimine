@@ -76,6 +76,7 @@ TYPER.prototype = {
     if (letter !== this.word.left.charAt(0)) {
       this.points = this.points*0.8
       this.mistakes += 1
+	  this.guessedWords = 0
       //console.log(this.points)
       //console.log(this.mistakes)
 
